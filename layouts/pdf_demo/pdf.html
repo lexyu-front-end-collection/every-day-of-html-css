@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title><!-- 移除標題，減少頁眉資訊 -->
+    <!-- 頁眉頁腳控制和統一邊界 -->
+    <style media="print">
+        @page {
+            size: 210mm 297mm;
+            /* A4 精確尺寸 */
+            margin: 2cm;
+        }
+
+        /* Chrome, Safari 和 Firefox 的頁眉頁腳隱藏 */
+        @page :left {
+            margin-left: 2cm;
+            margin-right: 2cm;
+            margin-top: 2cm;
+            margin-bottom: 2cm;
+        }
+
+        @page :right {
+            margin-left: 2cm;
+            margin-right: 2cm;
+            margin-top: 2cm;
+            margin-bottom: 2cm;
+        }
+
+        @page :first {
+            margin-left: 2cm;
+            margin-right: 2cm;
+            margin-top: 2cm;
+            margin-bottom: 2cm;
+        }
+
+        html {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", "PingFang TC", sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* 契約內容樣式 */
+        .contract {
+            width: 100%;
+            max-width: 21cm;
+            /* A4 寬度 */
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 18pt;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 14pt;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-indent: 2em;
+            margin: 0 0 10px 0;
+        }
+
+        /* 簽名表格樣式 */
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .signature-table td {
+            padding: 10px;
+            border: 1px solid #000;
+        }
+
+        .date {
+            text-align: center;
+        }
+
+        /* 操作按鈕區域 */
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        /* PDF 預覽容器 */
+        #pdf-preview-container {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        /* 列印時的樣式 (使用 Ctrl+P) */
+        /* 在此定義變數以確保統一使用相同的邊距 */
+        :root {
+            --page-margin: 2cm;
+        }
+
+        @page {
+            size: 210mm 297mm;
+            /* A4 精確尺寸 */
+            margin: var(--page-margin);
+        }
+
+        /* 契約內容樣式 - 確保與 A4 寬度一致 */
+        .contract {
+            width: 100%;
+            max-width: calc(210mm - 2 * var(--page-margin));
+            /* A4 寬度減去左右邊距 */
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .controls,
+            #pdf-preview-container {
+                display: none !important;
+            }
+
+            .contract {
+                max-width: none;
+                padding: 0;
+                margin: 0 auto;
+            }
+
+            /* 確保每頁開始的章節不會被分隔 */
+            .section {
+                page-break-inside: avoid;
+            }
+
+            /* 確保簽名表格不會被分頁 */
+            .signature {
+                page-break-inside: avoid;
+            }
+
+            /* 隱藏瀏覽器添加的頁眉頁腳 */
+            @page :first {
+                margin-top: var(--page-margin);
+            }
+
+            @page {
+                margin-bottom: var(--page-margin);
+            }
+
+            /* 移除頁眉頁腳的額外設定 */
+            @page {
+                margin-header: 0 !important;
+                margin-footer: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contract" id="contract-content">
+        <h1>合作契約書</h1>
+
+        <div class="section">
+            <h2>第一條　契約目的</h2>
+            <p>本契約由甲方與乙方基於共同合作之目的訂立，雙方同意遵守本契約各項條款。</p>
+        </div>
+
+        <div class="section">
+            <h2>第二條　合作內容</h2>
+            <p>甲方委託乙方進行下列事項：</p>
+            <ol>
+                <li>軟體開發與設計</li>
+                <li>技術支援與維護</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>第三條　契約期間</h2>
+            <p>契約期間自民國113年5月1日起至民國114年4月30日止。</p>
+        </div>
+
+        <div class="section">
+            <h2>第四條　報酬及支付方式</h2>
+            <p>甲方應於每月底前，支付乙方當月應得報酬新台幣壹拾萬元整。</p>
+        </div>
+
+        <div class="signature">
+            <table class="signature-table">
+                <tr>
+                    <td class="title" colspan="2">立約人：</td>
+                </tr>
+                <tr>
+                    <td>甲方：__________（簽章）</td>
+                    <td>乙方：__________（簽章）</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="date">中華民國　　年　　月　　日</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 新增列印指導說明和印表機設定提示 -->
+    <div class="controls">
+        <button id="preview-pdf">在頁面預覽 PDF</button>
+        <button id="open-pdf">在新視窗預覽 PDF</button>
+        <button id="print-page">列印預覽 (Ctrl+P)</button>
+        <div class="print-tips"
+            style="margin-top: 10px; padding: 8px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="margin: 0; font-size: 14px;">❗ <strong>列印提示</strong>：使用 Ctrl+P 列印時，請在「更多設定」中取消勾選「頁眉和頁腳」選項以獲得最佳效果。
+            </p>
+        </div>
+    </div>
+
+    <!-- PDF 預覽容器 -->
+    <div id="pdf-preview-container">
+        <iframe id="pdf-iframe"></iframe>
+    </div>
+
+    <script>
+        // 統一邊距設定
+        const PAGE_MARGIN = 2; // cm
+
+        // 擴展原有 html2pdf 配置，確保與瀏覽器列印設定一致
+        const pdfOptions = {
+            margin: [PAGE_MARGIN, PAGE_MARGIN, PAGE_MARGIN, PAGE_MARGIN],  // 上右下左 2cm 的邊距
+            filename: 'contract.pdf',  // 輸出 PDF 檔名
+            html2canvas: {
+                scale: 4,  // 提高渲染解析度
+                useCORS: true, // 允許跨域請求
+                logging: false // 避免過多日誌
+            },
+            jsPDF: {
+                unit: 'cm',  // 使用 cm 作為單位
+                format: 'a4', // A4 大小
+                orientation: 'portrait', // 垂直排列
+                precision: 16 // 增加精確度
+            },
+            pagebreak: { mode: 'avoid-all' } // 避免內容被分頁切割
+        };
+
+        // 在頁面中預覽 PDF
+        document.getElementById('preview-pdf').addEventListener('click', function () {
+            const element = document.getElementById('contract-content');
+            const container = document.getElementById('pdf-preview-container');
+            const iframe = document.getElementById('pdf-iframe');
+
+            // 顯示預覽容器
+            container.style.display = 'block';
+
+            // 生成 PDF 並顯示在 iframe 中
+            html2pdf()
+                .from(element)
+                .set(pdfOptions)
+                .toPdf()
+                .get('pdf')
+                .then(function (pdf) {
+                    const pdfUrl = pdf.output('bloburl'); // 取得 PDF 的 Blob URL
+                    iframe.src = pdfUrl;
+                });
+        });
+
+        // 在新視窗中預覽 PDF
+        document.getElementById('open-pdf').addEventListener('click', function () {
+            const element = document.getElementById('contract-content');
+
+            html2pdf()
+                .from(element)
+                .set(pdfOptions)
+                .toPdf()
+                .get('pdf')
+                .then(function (pdf) {
+                    // 獲取 PDF blob URL
+                    const pdfUrl = pdf.output('bloburl');
+
+                    // 直接在新視窗打開 PDF blob URL
+                    window.open(pdfUrl, '_blank');
+                });
+        });
+
+        // 添加列印功能並提示用戶
+        document.getElementById('print-page').addEventListener('click', function () {
+            alert('提示：在列印對話框中，請點擊「更多設定」並取消勾選「頁眉和頁腳」選項，以獲得無頁眉頁腳的效果。');
+            window.print();
+        });
+    </script>
+</body>
+
+</html>

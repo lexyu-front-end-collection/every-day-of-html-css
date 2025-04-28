@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡易 HTML + CSS 範例</title>
+    <style>
+        /* 基本頁面設置 */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* 標題區域 */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        /* 內容區域 */
+        .content {
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        .content h2 {
+            font-size: 1.8em;
+        }
+
+        .content p {
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        /* 圖片容器 */
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        /* 頁尾 */
+        footer {
+            text-align: center;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>我的簡單頁面</h1>
+        <p>這是一個使用 CSS 2.1 的簡單 HTML 頁面範例。</p>
+    </header>
+
+    <section class="content">
+        <h2>內容區域</h2>
+        <p>這是一些文字內容。</p>
+        <p>更多的文字可以在這裡。</p>
+
+        <div class="image-container">
+            <img src="https://via.placeholder.com/400x200" alt="示範圖片">
+        </div>
+
+        <h3>簡單表格</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>名稱</th>
+                    <th>描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>項目 1</td>
+                    <td>這是第一項描述。</td>
+                </tr>
+                <tr>
+                    <td>項目 2</td>
+                    <td>這是第二項描述。</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>版權所有 &copy; 2025</p>
+    </footer>
+
+</body>
+
+</html>
