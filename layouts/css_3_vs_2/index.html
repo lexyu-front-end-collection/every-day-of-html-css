@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 2.1 vs CSS3 比較工具</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --border-color: #ddd;
+            --background-light: #f9f9f9;
+            --text-color: #333;
+            --highlight-color: #ffffcc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .version-container {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 20px;
+            background-color: white;
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .version-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .css2 .version-title {
+            color: var(--primary-color);
+        }
+
+        .css3 .version-title {
+            color: var(--secondary-color);
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: var(--background-light);
+        }
+
+        .feature-item:nth-child(even) {
+            background-color: white;
+        }
+
+        .feature-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+        }
+
+        .code-example {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+        }
+
+        .differences-highlight {
+            background-color: var(--highlight-color);
+        }
+
+        .comparison-view {
+            margin-top: 30px;
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            background-color: white;
+        }
+
+        .feature-comparison:nth-child(odd) {
+            background-color: var(--background-light);
+        }
+
+        .feature-title {
+            grid-column: 1 / -1;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .css2-feature,
+        .css3-feature {
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .css2-feature {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .css3-feature {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .version-label {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .css2-label {
+            background-color: var(--primary-color);
+        }
+
+        .css3-label {
+            background-color: var(--secondary-color);
+        }
+
+        .not-supported {
+            color: #999;
+            font-style: italic;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        button.secondary:hover {
+            background-color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+
+            .comparison-container,
+            .feature-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>CSS 2.1 vs CSS3 比較工具</h1>
+        <p class="description">本工具提供CSS 2.1與CSS3之間的主要差異比較，協助開發者了解各版本的功能與限制。</p>
+    </header>
+
+    <div class="control-panel">
+        <button id="view-by-feature">依功能查看</button>
+        <button id="view-side-by-side" class="secondary">並排對照</button>
+    </div>
+
+    <!-- 預設顯示：依功能比較視圖 -->
+    <div id="feature-view" class="comparison-view">
+        <div class="feature-comparison">
+            <div class="feature-title">選擇器 (Selectors)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">基本選擇器</div>
+                <div class="feature-description">支援元素、類別、ID、屬性和後代選擇器。</div>
+                <div class="code-example">/* 元素選擇器 */
+                    element { property: value; }
+
+                    /* 類別選擇器 */
+                    .class { property: value; }
+
+                    /* ID選擇器 */
+                    #id { property: value; }
+
+                    /* 屬性選擇器 */
+                    [attribute] { property: value; }
+                    [attribute=value] { property: value; }
+
+                    /* 後代選擇器 */
+                    parent descendant { property: value; }</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">增強選擇器</div>
+                <div class="feature-description">新增了許多功能強大的選擇器，包括兄弟選擇器、屬性選擇器擴展、偽類和偽元素。</div>
+                <div class="code-example">/* 兄弟選擇器 */
+                    element ~ sibling { property: value; }
+
+                    /* 相鄰兄弟選擇器 */
+                    element + adjacent { property: value; }
+
+                    /* 子元素選擇器 */
+                    parent > child { property: value; }
+
+                    /* 擴展屬性選擇器 */
+                    [attribute^=value] { property: value; } /* 開頭匹配 */
+                    [attribute$=value] { property: value; } /* 結尾匹配 */
+                    [attribute*=value] { property: value; } /* 包含匹配 */
+
+                    /* 結構偽類 */
+                    :nth-child(n) { property: value; }
+                    :nth-of-type(n) { property: value; }
+                    :first-child { property: value; }
+                    :last-child { property: value; }
+                    :only-child { property: value; }
+                    :empty { property: value; }
+
+                    /* 狀態偽類 */
+                    :checked { property: value; }
+                    :enabled { property: value; }
+                    :disabled { property: value; }</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">顏色與透明度 (Colors & Opacity)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">顏色表示</div>
+                <div class="feature-description">支援十六進制、RGB和顏色名稱。沒有內建透明度支援。</div>
+                <div class="code-example">/* 顏色名稱 */
+                    color: black;
+
+                    /* 十六進制 */
+                    color: #000000;
+
+                    /* RGB */
+                    color: rgb(0, 0, 0);</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">擴展顏色模型</div>
+                <div class="feature-description">新增RGBA、HSL、HSLA和透明度支援。</div>
+                <div class="code-example">/* RGBA */
+                    color: rgba(0, 0, 0, 0.5); /* 50%透明度的黑色 */
+
+                    /* HSL (色相、飽和度、亮度) */
+                    color: hsl(0, 100%, 50%); /* 紅色 */
+
+                    /* HSLA (帶透明度) */
+                    color: hsla(0, 100%, 50%, 0.5); /* 50%透明度的紅色 */
+
+                    /* 透明度屬性 */
+                    opacity: 0.5; /* 整個元素50%透明 */</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">圓角與陰影 (Rounded Corners & Shadows)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">不支援</div>
+                <div class="feature-description">CSS 2.1不支援原生圓角和陰影效果，需要使用圖片或其他技巧實現。</div>
+                <div class="code-example">/* 需要使用背景圖片或其他方法 */
+                    .rounded-corner {
+                    background-image: url('corner.png');
+                    }</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">內建圓角和陰影</div>
+                <div class="feature-description">提供border-radius和box-shadow屬性，可以輕鬆創建圓角和陰影效果。</div>
+                <div class="code-example">/* 圓角 */
+                    border-radius: 10px; /* 所有角 */
+                    border-radius: 10px 20px 30px 40px; /* 左上, 右上, 右下, 左下 */
+
+                    /* 陰影 */
+                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* x偏移, y偏移, 模糊, 顏色 */
+                    box-shadow: inset 0 0 10px #000000; /* 內陰影 */
+
+                    /* 文字陰影 */
+                    text-shadow: 1px 1px 2px black;</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">漸變 (Gradients)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">不支援</div>
+                <div class="feature-description">CSS 2.1不支援原生漸變，需要使用圖片實現。</div>
+                <div class="code-example">/* 需要使用背景圖片 */
+                    background-image: url('gradient.png');</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">多種漸變類型</div>
+                <div class="feature-description">支援線性漸變、徑向漸變和圓錐漸變。</div>
+                <div class="code-example">/* 線性漸變 */
+                    background: linear-gradient(to bottom, #ffffff, #000000);
+                    background: linear-gradient(45deg, red, blue);
+
+                    /* 徑向漸變 */
+                    background: radial-gradient(circle, yellow, red);
+
+                    /* 重複漸變 */
+                    background: repeating-linear-gradient(45deg, #606dbc, #606dbc 10px, #465298 10px, #465298 20px);
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">轉換與動畫 (Transforms & Animations)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">不支援</div>
+                <div class="feature-description">CSS 2.1不支援原生轉換和動畫效果，需依賴JavaScript或Flash。</div>
+                <div class="code-example">/* 不支援 */</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">全面的轉換和動畫支援</div>
+                <div class="feature-description">提供transform、transition和animation屬性，實現豐富的視覺效果。</div>
+                <div class="code-example">/* 2D轉換 */
+                    transform: translate(50px, 100px);
+                    transform: rotate(45deg);
+                    transform: scale(1.5);
+                    transform: skew(20deg, 10deg);
+
+                    /* 3D轉換 */
+                    transform: rotateX(45deg);
+                    transform: perspective(500px) rotateY(45deg);
+
+                    /* 過渡效果 */
+                    transition: all 0.5s ease;
+                    transition: width 2s, height 4s;
+
+                    /* 動畫 */
+                    @keyframes example {
+                    0% { background-color: red; }
+                    50% { background-color: blue; }
+                    100% { background-color: green; }
+                    }
+
+                    animation: example 5s infinite;</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">多欄佈局 (Multi-column Layout)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">不支援</div>
+                <div class="feature-description">CSS 2.1沒有多欄佈局功能，需要使用多個div元素模擬。</div>
+                <div class="code-example">/* 需要使用多個浮動的div元素 */
+                    .column {
+                    float: left;
+                    width: 33.33%;
+                    }</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">原生多欄支援</div>
+                <div class="feature-description">提供column-count和column-width等屬性，輕鬆創建類似報紙的多欄佈局。</div>
+                <div class="code-example">/* 欄數定義 */
+                    column-count: 3;
+
+                    /* 欄寬定義 */
+                    column-width: 200px;
+
+                    /* 欄間距 */
+                    column-gap: 40px;
+
+                    /* 欄分隔線 */
+                    column-rule: 1px solid #dddddd;</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">Flexbox與Grid佈局</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">不支援</div>
+                <div class="feature-description">CSS 2.1主要使用float、position和display屬性進行佈局。</div>
+                <div class="code-example">/* 使用浮動和定位進行佈局 */
+                    .container {
+                    position: relative;
+                    }
+                    .left-column {
+                    float: left;
+                    width: 30%;
+                    }
+                    .right-column {
+                    float: right;
+                    width: 70%;
+                    }</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">強大的佈局系統</div>
+                <div class="feature-description">引入Flexbox和Grid佈局系統，大幅提升佈局能力。</div>
+                <div class="code-example">/* Flexbox */
+                    .flex-container {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    }
+                    .flex-item {
+                    flex: 1 0 200px;
+                    }
+
+                    /* Grid */
+                    .grid-container {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    grid-gap: 20px;
+                    grid-template-areas:
+                    "header header header"
+                    "sidebar content content"
+                    "footer footer footer";
+                    }
+                    .header { grid-area: header; }</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">媒體查詢 (Media Queries)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">基本媒體類型</div>
+                <div class="feature-description">CSS 2.1支援基本媒體類型，但功能有限。</div>
+                <div class="code-example">/* 媒體類型 */
+                    @media print {
+                    body { font-size: 12pt; }
+                    }
+
+                    @media screen {
+                    body { font-size: 14px; }
+                    }</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">增強的媒體查詢</div>
+                <div class="feature-description">提供豐富的媒體查詢功能，支持響應式設計。</div>
+                <div class="code-example">/* 基於螢幕寬度 */
+                    @media (max-width: 600px) {
+                    .container { width: 100%; }
+                    }
+
+                    /* 組合查詢條件 */
+                    @media (min-width: 601px) and (max-width: 900px) {
+                    .container { width: 80%; }
+                    }
+
+                    /* 基於設備方向 */
+                    @media (orientation: landscape) {
+                    .sidebar { float: left; }
+                    }
+
+                    /* 高解析度螢幕 */
+                    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+                    .logo { background-image: url('logo@2x.png'); }
+                    }</div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">Web字體 (Web Fonts)</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">有限支援</div>
+                <div class="feature-description">只能使用用戶系統上已安裝的字體。</div>
+                <div class="code-example">/* 使用系統字體 */
+                    font-family: Arial, Helvetica, sans-serif;</div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">@font-face規則</div>
+                <div class="feature-description">允許下載並使用自定義字體，極大擴展了網頁設計的可能性。</div>
+                <div class="code-example">/* 自定義字體 */
+                    @font-face {
+                    font-family: 'MyWebFont';
+                    src: url('myfont.woff2') format('woff2'),
+                    url('myfont.woff') format('woff');
+                    font-weight: normal;
+                    font-style: normal;
+                    }
+
+                    body {
+                    font-family: 'MyWebFont', Arial, sans-serif;
+                    }</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 並排對照視圖 (默認隱藏) -->
+    <div id="side-by-side-view" class="comparison-view" style="display: none;">
+        <div class="comparison-container">
+            <div class="version-container css2">
+                <div class="version-header">
+                    <h2 class="version-title">CSS 2.1</h2>
+                    <span>1998年發布</span>
+                </div>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-header">基本選擇器</div>
+                        <div class="feature-description">支援元素、類別、ID選擇器和簡單屬性選擇器</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">簡單顏色模型</div>
+                        <div class="feature-description">支援十六進制、RGB和顏色名稱</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">盒模型</div>
+                        <div class="feature-description">standard盒模型 (width和height只包含內容區域)</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">定位系統</div>
+                        <div class="feature-description">static、relative、absolute、fixed定位</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">背景</div>
+                        <div class="feature-description">基本背景控制 (color, image, repeat, position)</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">基本文字樣式</div>
+                        <div class="feature-description">字體、大小、行高、字間距等基本控制</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">不支援特性</div>
+                        <div class="feature-description">
+                            <ul>
+                                <li>圓角和陰影</li>
+                                <li>漸變</li>
+                                <li>轉換和動畫</li>
+                                <li>多欄佈局</li>
+                                <li>Flexbox和Grid</li>
+                                <li>高級媒體查詢</li>
+                                <li>自定義字體</li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="version-container css3">
+                <div class="version-header">
+                    <h2 class="version-title">CSS3</h2>
+                    <span>2001年起模組化發展</span>
+                </div>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-header">擴展選擇器</div>
+                        <div class="feature-description">增加了兄弟、子元素選擇器，以及大量偽類和偽元素</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">增強顏色模型</div>
+                        <div class="feature-description">新增RGBA、HSL、HSLA和透明度支援</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">盒模型</div>
+                        <div class="feature-description">增加box-sizing屬性，允許選擇盒模型類型</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">視覺效果</div>
+                        <div class="feature-description">圓角(border-radius)、陰影(box-shadow)、漸變(gradients)</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">轉換與動畫</div>
+                        <div class="feature-description">2D/3D轉換、過渡效果和關鍵幀動畫</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">多種佈局系統</div>
+                        <div class="feature-description">多欄佈局、Flexbox、Grid系統</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">響應式設計</div>
+                        <div class="feature-description">強大的媒體查詢功能，支援各種設備特性</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">Web字體</div>
+                        <div class="feature-description">@font-face規則，允許使用自定義字體</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">背景增強</div>
+                        <div class="feature-description">多重背景、背景尺寸、背景起始位置控制</div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-header">文字效果</div>
+                        <div class="feature-description">文字陰影、溢出控制、換行控制等</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增：實際HTML範例比較區域 -->
+    <div id="real-examples-view" class="comparison-view" style="display: none;">
+        <h2 style="text-align: center; margin: 20px 0;">汽車買賣合約實際案例比較</h2>
+        <p style="margin-bottom: 20px; text-align: center;">以下展示了相同合約使用不同CSS技術實現的差異</p>
+
+        <div class="feature-comparison">
+            <div class="feature-title">佈局技術對比</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1 (表格與浮動)</span>
+                <div class="feature-header">表格與浮動布局</div>
+                <div class="feature-description">使用傳統的table布局和float浮動技術來呈現頁面結構。</div>
+                <div class="code-example">/* 使用表格布局 */
+                    .contentTable {
+                    width: 100%;
+                    border-collapse: collapse;
+                    }
+                    .contentTable td.number {
+                    width: 40px;
+                    font-weight: bold;
+                    vertical-align: top;
+                    }
+                    .contentTable td.content {
+                    vertical-align: top;
+                    }
+
+                    /* 使用浮動布局 */
+                    .contractorBox {
+                    overflow: hidden; /* 清除浮動 */
+                    }
+                    .contractorBox .label {
+                    float: left;
+                    width: 80px;
+                    }
+                    .contractor {
+                    float: left;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <!-- CSS 2.1 實現的合約數據表項目 -->
+                    <h4>表項目樣式</h4>
+                    <table class="contentTable" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                        <tr>
+                            <td class="number" style="width: 40px; font-weight: bold; vertical-align: top;">一、</td>
+                            <td class="content" style="vertical-align: top;">
+                                甲方所有 2022 年 Toyota豐田(日本) 車型 CAMRY 壹輛，牌照 RAP-2069、引擎號碼：JTNBB3HK803004544。
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h4>簽署人資訊</h4>
+                    <div style="margin-top: 15px; overflow: hidden;"> <!-- 使用overflow清除浮動 -->
+                        <div style="float: left; width: 80px;">甲方(賣方)：</div>
+                        <div style="float: left;">
+                            <div>ABCD股份有限公司高雄分公司</div>
+                            <div style="padding-left: 20px; clear: right;">
+                                <div style="overflow: hidden;">
+                                    <div style="float: left;">統一編號：</div>
+                                    <div style="float: left;">99997250</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3 (Flexbox)</span>
+                <div class="feature-header">Flexbox彈性布局</div>
+                <div class="feature-description">使用現代Flexbox彈性盒子模型進行頁面結構設計。</div>
+                <div class="code-example">/* 彈性布局 */
+                    .between {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    }
+
+                    .itemBox {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    }
+
+                    .itemTitle {
+                    font-weight: bold;
+                    vertical-align: top;
+                    width: 40px;
+                    flex-shrink: 0;
+                    }
+
+                    .contractorBox {
+                    display: flex;
+                    flex-direction: row;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <!-- CSS3 Flexbox實現的合約數據表項目 -->
+                    <h4>表項目樣式</h4>
+                    <div style="width: 100%; display: flex; flex-direction: row; margin-bottom: 10px;">
+                        <p style="font-weight: bold; vertical-align: top; width: 40px; flex-shrink: 0;">一、</p>
+                        <div style="vertical-align: top;">
+                            甲方所有 2022 年 Toyota豐田(日本) 車型 CAMRY 壹輛，牌照 RAP-2069、引擎號碼：JTNBB3HK803004544。
+                        </div>
+                    </div>
+
+                    <h4>簽署人資訊</h4>
+                    <div style="margin-top: 15px; display: flex; flex-direction: row;">
+                        <div style="width: 80px; flex-shrink: 0;">甲方(賣方)：</div>
+                        <div style="flex: 1;">
+                            <div>ABCD股份有限公司高雄分公司</div>
+                            <div style="padding-left: 20px;">
+                                <div style="display: flex; flex-direction: row;">
+                                    <div style="flex-shrink: 0;">統一編號：</div>
+                                    <div>99997250</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">表格效果對比</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">傳統表格樣式</div>
+                <div class="feature-description">使用傳統的表格結構和樣式，表格元素具有默認的居中特性。</div>
+                <div class="code-example">/* 表格樣式 */
+                    .table {
+                    width: 100%;
+                    border: 1px solid #000;
+                    border-collapse: collapse;
+                    }
+
+                    .table-row-border {
+                    border-bottom: 1px solid #000;
+                    }
+
+                    .table td.label {
+                    width: 20%;
+                    border-right: 1px solid #000;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <!-- CSS 2.1 表格樣式 -->
+                    <table style="width: 100%; border: 1px solid #000; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid #000;">
+                            <td style="width: 20%; border-right: 1px solid #000; padding: 5px; text-align: center;">匯入銀行
+                            </td>
+                            <td style="padding: 5px;">台新國際商業銀行 建北分行﹙銀行代碼 812﹚</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #000;">
+                            <td style="width: 20%; border-right: 1px solid #000; padding: 5px; text-align: center;">
+                                匯款帳號(共14碼)</td>
+                            <td style="padding: 5px;">91497 - 070591234</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 20%; border-right: 1px solid #000; padding: 5px; text-align: center;">帳戶名稱
+                            </td>
+                            <td style="padding: 5px;">ABCD股份有限公司</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 15px;">
+                        <h4>表格默認對齊特性</h4>
+                        <p style="font-size: 0.9em; margin-bottom: 10px;">
+                            傳統表格中，表頭單元格(th)默認居中對齊，數據單元格(td)默認左對齊。但在實際應用中常通過text-align屬性顯式設置。</p>
+                        <table style="width: 100%; border: 1px solid #000; border-collapse: collapse;">
+                            <tr>
+                                <th style="border: 1px solid #000; padding: 5px;">表頭(默認居中)</th>
+                                <td style="border: 1px solid #000; padding: 5px;">數據單元格(默認左對齊)</td>
+                            </tr>
+                            <tr>
+                                <th style="border: 1px solid #000; padding: 5px; text-align: left;">表頭(強制左對齊)</th>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">數據單元格(強制居中)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">Flexbox模擬表格</div>
+                <div class="feature-description">使用Flexbox組件模擬表格結構，實現更靈活的佈局，但需要手動設置對齊方式。</div>
+                <div class="code-example">/* Flexbox表格樣式 */
+                    .table {
+                    width: 100%;
+                    border: 1px solid #000;
+                    }
+
+                    .tableItem:nth-child(1),
+                    .tableItem:nth-child(2) {
+                    border-bottom: 1px solid #000;
+                    }
+
+                    .tableItem {
+                    display: flex;
+                    flex-direction: row;
+                    }
+
+                    .tableItem > div {
+                    padding: 0 5px;
+                    }
+
+                    .tableItem :first-child {
+                    width: 20%;
+                    border-right: 1px solid #000;
+                    /* 需要手動設置居中 */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <!-- CSS3 Flexbox表格模擬 - 默認左對齊 -->
+                    <div style="width: 100%; border: 1px solid #000; margin-bottom: 15px;">
+                        <div style="display: flex; flex-direction: row; border-bottom: 1px solid #000;">
+                            <div style="width: 20%; border-right: 1px solid #000; padding: 5px;">匯入銀行</div>
+                            <div style="padding: 5px;">台新國際商業銀行 建北分行﹙銀行代碼 812﹚</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; border-bottom: 1px solid #000;">
+                            <div style="width: 20%; border-right: 1px solid #000; padding: 5px;">匯款帳號(共14碼)</div>
+                            <div style="padding: 5px;">91497 - 070591234</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="width: 20%; border-right: 1px solid #000; padding: 5px;">帳戶名稱</div>
+                            <div style="padding: 5px;">ABCD股份有限公司</div>
+                        </div>
+                    </div>
+
+                    <!-- CSS3 Flexbox表格模擬 - 手動居中 -->
+                    <h4>Flexbox手動設置對齊</h4>
+                    <p style="font-size: 0.9em; margin-bottom: 10px;">
+                        Flexbox默認左對齊，但可以通過justify-content和align-items精確控制對齊方式：</p>
+                    <div style="width: 100%; border: 1px solid #000;">
+                        <div style="display: flex; flex-direction: row; border-bottom: 1px solid #000;">
+                            <div
+                                style="width: 20%; border-right: 1px solid #000; padding: 5px; display: flex; justify-content: center; align-items: center;">
+                                匯入銀行</div>
+                            <div style="padding: 5px;">台新國際商業銀行 建北分行﹙銀行代碼 812﹚</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; border-bottom: 1px solid #000;">
+                            <div
+                                style="width: 20%; border-right: 1px solid #000; padding: 5px; display: flex; justify-content: center; align-items: center;">
+                                匯款帳號(共14碼)</div>
+                            <div style="padding: 5px;">91497 - 070591234</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row;">
+                            <div
+                                style="width: 20%; border-right: 1px solid #000; padding: 5px; display: flex; justify-content: center; align-items: center;">
+                                帳戶名稱</div>
+                            <div style="padding: 5px;">ABCD股份有限公司</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">簽署區塊對比</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">浮動佈局的簽署區塊</div>
+                <div class="feature-description">使用浮動技術實現並排簽署區塊。</div>
+                <div class="code-example">/* 簽署區浮動佈局 */
+                    .signsureBox {
+                    overflow: hidden; /* 清除浮動 */
+                    margin-top: 20px;
+                    }
+
+                    .signsureBox .sign-left {
+                    float: left;
+                    width: 58%;
+                    margin-right: 2%;
+                    }
+
+                    .signsureBox .sign-right {
+                    float: left;
+                    width: 40%;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <!-- CSS 2.1 浮動佈局簽署區塊 -->
+                    <div style="overflow: hidden; margin-top: 20px;"> <!-- 清除浮動 -->
+                        <div style="float: left; width: 58%; margin-right: 2%;">
+                            <table
+                                style="width: 100%; text-align: center; border: 1px solid black; border-collapse: collapse;">
+                                <tr>
+                                    <th colspan="2" style="border: 1px solid black;">經辦據點</th>
+                                </tr>
+                                <tr>
+                                    <td width="50%" style="border: 1px solid black;">營業所長</td>
+                                    <td width="50%" style="border: 1px solid black;">承辦業代</td>
+                                </tr>
+                                <tr>
+                                    <td height="100" style="border: 1px solid black;"></td>
+                                    <td height="100" style="border: 1px solid black;"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="float: left; width: 40%;">
+                            <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px">
+                                重要提醒事項！！！
+                            </div>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="width: 40px; font-weight: bold; vertical-align: top;">1.</td>
+                                    <td style="vertical-align: top;">
+                                        <p>甲方員工不代收現金。</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">Flexbox的簽署區塊</div>
+                <div class="feature-description">使用Flexbox實現並排簽署區塊，更加靈活和自適應。</div>
+                <div class="code-example">/* Flexbox簽署區佈局 */
+                    .signsureBox {
+                    display: flex;
+                    flex-direction: row;
+                    margin-top: 20px;
+                    gap: 20px; /* CSS3新特性 */
+                    }
+
+                    .signsureBox > div:nth-child(1) {
+                    width: 60%;
+                    }
+
+                    .signsureBox > div:nth-child(2) {
+                    width: 40%;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <!-- CSS3 Flexbox簽署區塊 -->
+                    <div style="display: flex; flex-direction: row; margin-top: 20px; gap: 20px;">
+                        <div style="width: 60%;">
+                            <div style="text-align: center; border: 1px solid black;">
+                                <div style="border-bottom: 1px solid black;">經辦據點</div>
+                                <div style="display: flex;">
+                                    <div style="width: 50%;">
+                                        <div style="border-bottom: 1px solid black;">營業所長</div>
+                                        <div style="height: 100px;"></div>
+                                    </div>
+                                    <div style="width: 50%; border-left: 1px solid black;">
+                                        <div style="border-bottom: 1px solid black;">承辦業代</div>
+                                        <div style="height: 100px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width: 40%;">
+                            <div style="font-weight: bold; font-size: 18px; margin-bottom: 20px">
+                                重要提醒事項！！！
+                            </div>
+                            <div style="width: 100%; display: flex; flex-direction: row;">
+                                <p style="font-weight: bold; vertical-align: top; width: 40px; flex-shrink: 0;">1.</p>
+                                <div style="vertical-align: top;">
+                                    <p>甲方員工不代收現金。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">契約方信息結構對比</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">浮動布局結構</div>
+                <div class="feature-description">使用浮動布局處理契約方信息，需要額外的清除浮動處理。</div>
+                <div class="code-example">/* CSS 2.1契約方信息結構 */
+                    /* 未處理的基本結構 */
+                    .contractorBox {
+                    /* 未清除浮動，會導致容器崩塌 */
+                    }
+                    .contractorBox .label {
+                    float: left;
+                    width: 80px;
+                    }
+                    .contractor {
+                    float: left;
+                    }
+                    .contractorItem .label {
+                    float: left;
+                    }
+                    .contractorItem .value {
+                    float: left;
+                    }
+
+                    /* 處理後的結構 */
+                    .contractorBox {
+                    overflow: hidden; /* 清除浮動 */
+                    }
+                    .contractorItem {
+                    overflow: hidden; /* 清除浮動 */
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <h4>未處理浮動時（容器崩塌）</h4>
+                    <div style="border: 1px dashed #999; padding: 5px; margin-bottom: 20px; background-color: #f8f8f8;">
+                        <div style="float: left; width: 80px;">甲方(賣方)：</div>
+                        <div style="float: left;">
+                            <div>ABCD股份有限公司高雄分公司</div>
+                            <div style="padding-left: 20px;">
+                                <div>
+                                    <div style="float: left;">統一編號：</div>
+                                    <div style="float: left;">99997250</div>
+                                </div>
+                                <div>
+                                    <div style="float: left;">地址：</div>
+                                    <div style="float: left;">高雄市左營區重信路777號</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 容器崩塌 -->
+                    </div>
+
+                    <br />
+                    <br />
+                    <br />
+
+                    <h4>處理浮動後</h4>
+                    <div style="border: 1px dashed #999; padding: 5px; overflow: hidden; background-color: #f8f8f8;">
+                        <div style="float: left; width: 80px;">甲方(賣方)：</div>
+                        <div style="float: left;">
+                            <div>ABCD股份有限公司高雄分公司</div>
+                            <div style="padding-left: 20px; clear: right;">
+                                <div style="overflow: hidden;">
+                                    <div style="float: left;">統一編號：</div>
+                                    <div style="float: left;">99997250</div>
+                                </div>
+                                <div style="overflow: hidden;">
+                                    <div style="float: left;">地址：</div>
+                                    <div style="float: left;">高雄市左營區重信路777號</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">Flexbox佈局結構</div>
+                <div class="feature-description">使用Flexbox處理契約方信息，自然處理容器高度，不需要清除浮動。</div>
+                <div class="code-example">/* CSS3契約方信息結構 */
+                    .contractorBox {
+                    display: flex;
+                    flex-direction: row;
+                    }
+
+                    .contractorBox > div:nth-child(1) {
+                    width: 80px;
+                    flex-shrink: 0;
+                    }
+
+                    .contractorInformation {
+                    padding-left: 20px;
+                    }
+
+                    .contractorItem {
+                    display: flex;
+                    flex-direction: row;
+                    }
+
+                    .contractorItem > div:nth-child(1) {
+                    flex-shrink: 0;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">渲染效果</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <h4>Flexbox自然處理容器高度</h4>
+                    <div style="border: 1px dashed #999; padding: 5px; margin-bottom: 20px; background-color: #f8f8f8;">
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="width: 80px; flex-shrink: 0;">甲方(賣方)：</div>
+                            <div>
+                                <div>ABCD股份有限公司高雄分公司</div>
+                                <div style="padding-left: 20px;">
+                                    <div style="display: flex; flex-direction: row;">
+                                        <div style="flex-shrink: 0;">統一編號：</div>
+                                        <div>99997250</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: row;">
+                                        <div style="flex-shrink: 0;">地址：</div>
+                                        <div>高雄市左營區重信路777號</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">清除浮動技巧</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">使用overflow清除浮動</div>
+                <div class="feature-description">在CSS 2.1中，需要使用特殊技巧來清除浮動，防止容器崩塌。</div>
+                <div class="code-example">/* 清除浮動的傳統方法 */
+                    .contractorBox {
+                    overflow: hidden; /* 清除浮動 */
+                    }
+
+                    .contractorItem {
+                    overflow: hidden; /* 清除浮動 */
+                    }
+
+                    /* 另一種清除浮動方法 */
+                    .clearfix:after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">問題展示</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <h4>浮動元素未清除的情況（容器崩塌）</h4>
+                    <div style="border: 1px dashed #999; padding: 5px; margin-bottom: 15px;">
+                        <div
+                            style="float: left; width: 100px; height: 50px; background-color: #b3e0ff; margin-right: 10px;">
+                            浮動元素</div>
+                        <div style="float: left; width: 100px; height: 80px; background-color: #b3e0ff;">浮動元素</div>
+                        <!-- 容器崩塌 -->
+                    </div>
+
+                    <br />
+                    <br />
+                    <br />
+
+                    <h4>使用overflow清除浮動</h4>
+                    <div style="border: 1px dashed #999; padding: 5px; overflow: hidden;">
+                        <div
+                            style="float: left; width: 100px; height: 50px; background-color: #b3e0ff; margin-right: 10px;">
+                            浮動元素</div>
+                        <div style="float: left; width: 100px; height: 80px; background-color: #b3e0ff;">浮動元素</div>
+                        <!-- 清除了浮動 -->
+                    </div>
+                </div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">Flexbox自動處理空間</div>
+                <div class="feature-description">使用Flexbox時，不需要處理浮動問題，佈局更加穩定可靠。</div>
+                <div class="code-example">/* 使用Flexbox，不需要清除浮動 */
+                    .contractorBox {
+                    display: flex;
+                    flex-direction: row;
+                    }
+
+                    .contractorItem {
+                    display: flex;
+                    flex-direction: row;
+                    }
+
+                    /* 控制元素大小 */
+                    .contractorBox > div:nth-child(1) {
+                    width: 80px;
+                    flex-shrink: 0;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">改進展示</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <h4>使用Flexbox自動處理空間（無需清除浮動）</h4>
+                    <div style="border: 1px dashed #999; padding: 5px; display: flex;">
+                        <div style="width: 100px; height: 50px; background-color: #ccffcc; margin-right: 10px;">Flex項目
+                        </div>
+                        <div style="width: 100px; height: 80px; background-color: #ccffcc;">Flex項目</div>
+                        <!-- 自動處理空間，容器不會崩塌 -->
+                    </div>
+
+                    <h4>Flexbox自動換行</h4>
+                    <div
+                        style="border: 1px dashed #999; padding: 5px; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                        <div style="width: 100px; height: 50px; background-color: #ccffcc;">Flex項目</div>
+                        <div style="width: 100px; height: 50px; background-color: #ccffcc;">Flex項目</div>
+                        <div style="width: 100px; height: 50px; background-color: #ccffcc;">Flex項目</div>
+                        <div style="width: 100px; height: 50px; background-color: #ccffcc;">Flex項目</div>
+                        <div style="width: 100px; height: 50px; background-color: #ccffcc;">Flex項目</div>
+                        <!-- 自動換行，並通過gap屬性設置間距 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-comparison">
+            <div class="feature-title">頁面打印控制</div>
+            <div class="css2-feature">
+                <span class="version-label css2-label">CSS 2.1</span>
+                <div class="feature-header">基礎打印媒體查詢</div>
+                <div class="feature-description">CSS 2.1提供基本的媒體類型區分，但打印控制有限。</div>
+                <div class="code-example">/* 媒體類型 */
+                    @media print {
+                    body {
+                    font-size: 12pt;
+                    }
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">說明</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <p>CSS 2.1的打印控制局限於基本的媒體類型區分，針對打印時的頁面呈現能力有限。在兩份合約中，CSS 2.1版本針對打印僅有基本設置，無法精確控制頁面大小和邊距。</p>
+                    <ul style="margin-top: 10px; list-style-position: inside;">
+                        <li>無法指定紙張大小</li>
+                        <li>無法精確控制頁邊距</li>
+                        <li>無法控制分頁行為</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="css3-feature">
+                <span class="version-label css3-label">CSS3</span>
+                <div class="feature-header">詳細的頁面設置</div>
+                <div class="feature-description">CSS3提供@page規則，可精確控制打印頁面的各方面。</div>
+                <div class="code-example">/* 控制打印頁面大小和邊距 */
+                    @page {
+                    size: A4; /* 210mm x 297mm */
+                    margin: 10mm;
+                    }
+
+                    /* 可以指定不同位置的頁面邊距 */
+                    @page :left {
+                    margin-left: 20mm;
+                    margin-right: 10mm;
+                    }
+
+                    @page :right {
+                    margin-left: 10mm;
+                    margin-right: 20mm;
+                    }</div>
+
+                <div class="feature-header" style="margin-top: 15px;">說明</div>
+                <div class="render-example"
+                    style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff;">
+                    <p>CSS3的@page規則允許更精確地控制列印輸出，這在合約文件中特別重要。在第二個模板中可以看到：</p>
+                    <ul style="margin-top: 10px; list-style-position: inside;">
+                        <li>明確指定了A4紙張大小</li>
+                        <li>精確定義了10mm的頁面邊距</li>
+                        <li>可以為左右頁面設置不同邊距</li>
+                        <li>可以控制分頁行為與內容流</li>
+                    </ul>
+                    <p style="margin-top: 10px;">這些功能在正式文件（如合約）中尤為重要，可確保打印輸出的專業性和一致性。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切換視圖功能
+        const featureView = document.getElementById('feature-view');
+        const sideBySideView = document.getElementById('side-by-side-view');
+        const realExamplesView = document.getElementById('real-examples-view');
+        const featureButton = document.getElementById('view-by-feature');
+        const sideBySideButton = document.getElementById('view-side-by-side');
+        const realExamplesButton = document.createElement('button');
+
+        // 添加實際案例按鈕
+        realExamplesButton.id = 'view-real-examples';
+        realExamplesButton.textContent = '實際案例比較';
+        realExamplesButton.classList.add('secondary');
+        document.querySelector('.control-panel').appendChild(realExamplesButton);
+
+        featureButton.addEventListener('click', function () {
+            featureView.style.display = 'block';
+            sideBySideView.style.display = 'none';
+            realExamplesView.style.display = 'none';
+            featureButton.classList.remove('secondary');
+            sideBySideButton.classList.add('secondary');
+            realExamplesButton.classList.add('secondary');
+        });
+
+        sideBySideButton.addEventListener('click', function () {
+            featureView.style.display = 'none';
+            sideBySideView.style.display = 'block';
+            realExamplesView.style.display = 'none';
+            featureButton.classList.add('secondary');
+            sideBySideButton.classList.remove('secondary');
+            realExamplesButton.classList.add('secondary');
+        });
+
+        realExamplesButton.addEventListener('click', function () {
+            featureView.style.display = 'none';
+            sideBySideView.style.display = 'none';
+            realExamplesView.style.display = 'block';
+            featureButton.classList.add('secondary');
+            sideBySideButton.classList.add('secondary');
+            realExamplesButton.classList.remove('secondary');
+        });
+    </script>
+</body>
+
+</html>
